@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Carta para Valeria</title>
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --ink: #2b2b2b;
+        --ink-soft: #6b6b6b;
+        --accent: #ff6fa7;
+        --glass: rgba(255, 255, 255, 0.88);
+        --grad1: #ffe0ea;
+        --grad2: #e7d7ff;
+        --grad3: #ddf2ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        /* fondo animado */
+        background: radial-gradient(
+            1000px 700px at 15% 0%,
+            #ffffffaa 0%,
+            transparent 60%
+          ),
+          radial-gradient(900px 700px at 85% 10%, #ffffffaa 0%, transparent 60%),
+          linear-gradient(135deg, var(--grad1), var(--grad2), var(--grad3));
+        background-size: 140% 140%;
+        animation: bg-pan 18s ease-in-out infinite;
+        overflow-x: hidden;
+        display: grid;
+        place-items: center;
+        padding: clamp(16px, 4vw, 48px);
+      }
+      @keyframes bg-pan {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* blobs decorativos */
+      .blobs {
+        position: fixed;
+        inset: -10%;
+        z-index: 0;
+        pointer-events: none;
+        filter: blur(40px) saturate(120%);
+        opacity: 0.55;
+      }
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        mix-blend-mode: soft-light;
+      }
+      .blob.b1 {
+        width: 36vmax;
+        height: 36vmax;
+        left: 6%;
+        top: 8%;
+        background: #ffd6e6;
+        animation: float1 22s ease-in-out infinite;
+      }
+      .blob.b2 {
+        width: 30vmax;
+        height: 30vmax;
+        right: 8%;
+        top: 16%;
+        background: #e6ddff;
+        animation: float2 26s ease-in-out infinite;
+      }
+      .blob.b3 {
+        width: 42vmax;
+        height: 42vmax;
+        left: 20%;
+        bottom: -6%;
+        background: #daf3ff;
+        animation: float3 30s ease-in-out infinite;
+      }
+      @keyframes float1 {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-18px);
+        }
+      }
+      @keyframes float2 {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(22px);
+        }
+      }
+      @keyframes float3 {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+
+      /* tarjeta */
+      .card {
+        position: relative;
+        z-index: 1;
+        width: min(860px, 100%);
+        background: var(--glass);
+        backdrop-filter: saturate(120%) blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 26px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        padding: clamp(20px, 4.8vw, 48px);
+        overflow: hidden;
+      }
+
+      header.h {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(28px, 4.6vw, 44px);
+        line-height: 1.15;
+        margin: 0;
+      }
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--ink-soft);
+        font-size: clamp(12px, 1.6vw, 14px);
+      }
+      .divider {
+        height: 1px;
+        margin: 14px 0 20px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 0, 0, 0.12),
+          transparent
+        );
+      }
+
+      canvas#particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      .letter {
+        font-size: clamp(16px, 1.9vw, 18px);
+        line-height: 1.8;
+        min-height: 260px; /* reserva espacio para que no salte el layout */
+        white-space: normal;
+      }
+
+      .signature {
+        margin-top: 18px;
+        font-family: "Playfair Display", serif;
+        font-size: clamp(18px, 2.1vw, 22px);
+        text-align: right;
+        min-height: 28px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 16px;
+      }
+      .pager {
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+      .btn {
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 14px;
+        background: var(--ink);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        transition: transform 0.08s ease, box-shadow 0.2s ease,
+          opacity 0.2s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .btn.alt {
+        background: var(--accent);
+      }
+
+      .foot {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #7a7a7a;
+        text-align: center;
+        user-select: none;
+      }
+
+      /* transiciones sutiles al cambiar de página */
+      .fade-enter {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      .fade-enter-active {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+      }
+
+      /* Respeta preferencias del usuario */
+      @media (prefers-reduced-motion: reduce) {
+        body {
+          animation: none;
+        }
+        .blob {
+          animation: none;
+        }
+        .fade-enter,
+        .fade-enter-active {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="blobs" aria-hidden="true">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+    </div>
+
+    <main class="card">
+      <header class="h">
+        <div>
+          <h1 class="title">Para Valeria</h1>
+          <p class="subtitle">Una carta de Diego</p>
+        </div>
+      </header>
+
+      <div class="divider"></div>
+
+      <article id="letter" class="letter" aria-live="polite"></article>
+      <div id="signature" class="signature"></div>
+
+      <div class="controls">
+        <span id="pager" class="pager">1 / 2</span>
+        <div style="display: flex; gap: 8px">
+          <button id="btn-prev" class="btn" disabled>Anterior</button>
+          <button id="btn-next" class="btn alt">Siguiente</button>
+        </div>
+      </div>
+
+      <p class="foot">Hecha con cariño — Diego ❤️</p>
+    </main>
+
+    <script>
+      const pages = [
+        `Ayer fue la primera vez que te vi en mucho tiempo, y aún no puedo dejar de revivir ese momento una y otra vez.  
+Tu sonrisa, tan hermosa, fue como un abrazo que no sabía que necesitaba.  
+Tus ojos… tan profundos y llenos de luz, me hicieron olvidar por un instante dónde estaba y quién era; solo existía ese instante contigo.
+
+Me di cuenta de que tu presencia tiene algo mágico, algo que calma y, al mismo tiempo, acelera el corazón.  
+Es como si tu voz pudiera envolver cada uno de mis pensamientos y hacer que el resto del mundo se silencie.  
+Y aunque sea difícil de explicar, hay algo en ti que me inspira a querer ser mejor, a mostrar lo mejor de mí sin miedo.
+
+Siento con certeza que ya andamos saliendo, pero no puedo evitar tener una ligera duda sobre si tú me ves también así.  
+Sin embargo, eso no cambia lo que quiero decirte: me gustas mucho.
+`,
+        `No planeo lastimarte, porque lo último que quiero es herir a alguien tan especial como tú.  
+Tengo mucho por dar, pero no tengo prisa; quiero que todo sea a tu ritmo, con calma, disfrutando de cada momento sin saltarnos etapas.
+
+Lo que siento por ti va más allá de lo físico; me atrae tu forma de ser, tu manera de mirar, tu corazón.  
+Me atrae la manera en que haces que todo parezca más simple y más bonito, incluso cuando los días no son fáciles.  
+Espero que tú también sientas, aunque sea un poco, esta emoción que poco a poco crece en mí:  
+las ganas de compartir mis días, mis historias y mis sueños contigo.
+
+No sé si fue casualidad o destino, pero sé que quiero volver a verte tantas veces como sea posible.  
+Quiero que cada encuentro sea una nueva historia que podamos recordar.  
+Porque desde que te vi, me dejaste un recuerdo imposible de olvidar, y no puedo evitar desear que este comienzo sea solo el primer capítulo de algo mucho más grande.
+
+Con cariño,  
+Diego`,
+      ];
+
+      // ---- ELEMENTOS ----
+      const letterEl = document.getElementById("letter");
+      const signEl = document.getElementById("signature");
+      const prevBtn = document.getElementById("btn-prev");
+      const nextBtn = document.getElementById("btn-next");
+      const pagerEl = document.getElementById("pager");
+
+      const SPEED = 24;
+      let currentPage = 0;
+      let typingTimer = null;
+      let typing = false;
+
+      function setPager(i) {
+        pagerEl.textContent = `${i + 1} / ${pages.length}`;
+        prevBtn.disabled = i === 0;
+        nextBtn.disabled = i === pages.length - 1;
+      }
+
+      function clearTyping() {
+        if (typingTimer) clearTimeout(typingTimer);
+        typing = false;
+      }
+
+      function typeText(el, text, { speed = SPEED, onDone } = {}) {
+        clearTyping();
+        el.innerHTML = "";
+        signEl.textContent = "";
+        typing = true;
+
+        el.classList.add("fade-enter");
+        requestAnimationFrame(() => {
+          el.classList.add("fade-enter-active");
+          el.classList.remove("fade-enter");
+        });
+
+        let i = 0;
+        function step() {
+          const ch = text.charAt(i++);
+          el.innerHTML += ch === "\n" ? "<br>" : ch;
+          if (i <= text.length) {
+            typingTimer = setTimeout(step, speed);
+          } else {
+            typing = false;
+            onDone && onDone();
+          }
+        }
+        step();
+      }
+
+      function showPage(i) {
+        currentPage = i;
+        setPager(i);
+        typeText(letterEl, pages[i], {
+          onDone: () => {
+            if (i === pages.length - 1) {
+              setTimeout(() => {
+                typeSignature("— Diego", 30);
+              }, 140);
+            }
+          },
+        });
+      }
+
+      function typeSignature(text, speed = 28) {
+        signEl.textContent = "";
+        let j = 0;
+        (function step() {
+          signEl.textContent += text.charAt(j++);
+          if (j <= text.length) setTimeout(step, speed);
+        })();
+      }
+
+      nextBtn.addEventListener("click", () => {
+        if (typing) {
+          clearTyping();
+        }
+        if (currentPage < pages.length - 1) {
+          showPage(currentPage + 1);
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        if (typing) {
+          clearTyping();
+        }
+        if (currentPage > 0) {
+          showPage(currentPage - 1);
+        }
+      });
+
+      showPage(0);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" && !nextBtn.disabled) nextBtn.click();
+        if (e.key === "ArrowLeft" && !prevBtn.disabled) prevBtn.click();
+      });
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      }
+    </script>
+  </body>
+</html>
